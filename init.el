@@ -6,6 +6,7 @@
 ;(add-hook 'prog-mode-hook #'hs-minor-mode)
 (global-display-line-numbers-mode 1)
 ;;(tool-bar-mode -1)
+
 (require 'package)
 (setq package-archives '(("gnu" . "http://mirrors.cloud.tencent.com/elpa/gnu/")
 			 ("melpa" . "http://mirrors.cloud.tencent.com/elpa/melpa/")))
@@ -15,7 +16,7 @@
   (package-refresh-contents))
 
 (package-install 'orderless)
-(setq completion-styles '(orderless))
+;; (setq completion-styles '())
 
 (package-install 'vertico)
 (vertico-mode t)
@@ -33,7 +34,9 @@
   (setq company-idle-delay 0.0)
   (setq company-show-numbers t) ;; 给选项编号 (按快捷键 M-1、M-2 等等来进行选择).
   (setq company-selection-wrap-around t)
-  (setq company-transformers '(company-sort-by-occurrence))) ; 
+  (setq company-transformers '(company-sort-by-occurrence))) ;
+
+(setq company-backends '((company-capf company-dabbrev-code company-clang)))
 
 (package-install 'yasnippet)
 (use-package yasnippet
@@ -77,13 +80,31 @@
     (setq lsp-headerline-breadcrumb-enable t))
 
 
+(use-package lsp-pyright
+  :ensure t
+  :config
+  :hook
+  (python-mode . (lambda ()
+		  (require 'lsp-pyright)
+		  (lsp-deferred))))
+
+(use-package c++-mode
+  :functions 			; suppress warnings
+  c-toggle-hungry-state
+  :hook
+  (c-mode . lsp-deferred)
+  (c++-mode . lsp-deferred)
+  (c++-mode . c-toggle-hungry-state))
+
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(lsp-mode yasnippet-snippets yasnippet vertico company use-package orderless)))
+   '(lsp-pyright lsp-mode yasnippet-snippets yasnippet vertico company use-package orderless)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
